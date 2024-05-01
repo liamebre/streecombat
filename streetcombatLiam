@@ -38,43 +38,63 @@ class Player(pygame.sprite.Sprite):
             self.x_speed = -10
         if keys[pygame.K_RIGHT] and self.num == 2 and not self.rect.x > WIDTH - 150:
             self.x_speed = 10
-        if keys[pygame.K_KP0]and self.num == 2:
-            print("oof")
-            player.swing()
+        if keys[pygame.K_KP0] and self.num == 2:
+            player.swing(self.num)
         self.rect.right += self.x_speed
         if keys[pygame.K_a] and self.num == 1 and not self.rect.x < -50:
             self.x_speed = -20
         if keys[pygame.K_d] and self.num == 1 and not self.rect.x > WIDTH - 150:
             self.x_speed = 20
         if keys[pygame.K_SPACE] and self.num == 1:
-            print("ouch")
-            player.swing()
+            player.swing(self.num)
         self.rect.right += self.x_speed
-    def swing(self):
-        swings = Punch(self.rect.left+10,self.rect.top+150)
+    def swing(self,num):
+        if num == 1:
+            swings = Punch(player.rect.x + 190,player.rect.y + 150,num)
+        if num == 2:
+            swings = Punch(player2.rect.x - 50 ,player2.rect.y + 150,num)
         all_sprites.add(swings)
-        fists.add(swings)
+        if num == 2 :
+            fists2.add(swings)
+        if num == 1:
+            fists.add(swings)
 
 
 class Punch(pygame.sprite.Sprite):
-    def __init__(self,x,y):
+    def __init__(self,x,y,num):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load(os.path.join(img_folder, "arm.png")).convert()
+        if num == 1:
+            self.image = pygame.image.load(os.path.join(img_folder, "arm1.png")).convert()
+        if num == 2:
+            self.image = pygame.image.load(os.path.join(img_folder, "arm2.png")).convert()
         self.image.set_colorkey(BLACK)
         self.rect = self.image.get_rect()
         self.rect.bottom = y
         self.rect.centerx = x
-        self.y_speed = -40
+        self.num = num
+        if num == 1 :
+            self.y_speed = -40
+        if num ==2 :
+            self.y_speed = 40
     def update(self):
         self.rect.x -= self.y_speed
+        bing = pygame.sprite.groupcollide(fists, players, False, False)
+        if bing:
+            print("1 hit")
+        bonk = pygame.sprite.groupcollide(fists2, players2, False, False)
+        if bonk:
+            print("2 hit")
 
 
 all_sprites=pygame.sprite.Group()
 player = Player(1,1)
 player2 = Player(6,2)
 players = pygame.sprite.Group()
+players2 = pygame.sprite.Group()
 fists = pygame.sprite.Group()
-players.add(player, player2)
+fists2 = pygame.sprite.Group()
+players2.add(player)
+players.add(player2)
 all_sprites.add(player, player2)
 
 pygame.display.set_caption("street combat")
@@ -95,3 +115,4 @@ while run:  # keep looping
     all_sprites.draw(win)
     pygame.display.flip()
 pygame.quit()  # exit game
+
