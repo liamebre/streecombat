@@ -1,0 +1,63 @@
+import pygame
+import random
+import os
+from random import random, randint, seed
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+RED = (255, 0, 0)
+GREEN = (0, 255, 0)
+BLUE = (0, 0, 255)
+
+pygame.init()
+pygame.mixer.init()
+game_folder = os.path.dirname(__file__)
+img_folder = os.path.join(game_folder, "img")
+
+WIDTH = 1300
+HEIGHT = 700
+win = pygame.display.set_mode((WIDTH,HEIGHT))
+FPS = 30
+
+background = pygame.image.load(os.path.join(img_folder, "fitbg.png"))
+
+background_rect = background.get_rect()
+class Player(pygame.sprite.Sprite):
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.image.load(os.path.join(img_folder, "guy.png")).convert()
+        self.rect = self.image.get_rect()
+        self.rect.x = 100
+        self.rect.y = 100
+        self.x_vel = 10
+    def Update(self):
+        self.x_vel = 0
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_a]:
+            self.x_vel = -10
+        if keys[pygame.K_d]:
+            self.x_vel = 10
+        self.rect.x += self.x_vel
+all_sprites=pygame.sprite.Group()
+player = Player()
+players = pygame.sprite.Group()
+players.add(player)
+all_sprites.add(players)
+
+pygame.display.set_caption("JUMP")
+clock=pygame.time.Clock()
+run = True
+while run: # keep looping
+    clock.tick(FPS)  # refresh rate
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:  # x in top right
+            run = False
+    all_sprites.update()
+    # set background Colour
+
+    win.fill((BLACK))
+    win.blit(background, background_rect)
+    # draw rectangle in position and set colour
+    # redraw the screen
+    all_sprites.draw(win)
+    pygame.display.flip()
+pygame.quit()  # exit game
