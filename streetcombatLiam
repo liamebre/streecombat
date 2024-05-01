@@ -30,24 +30,54 @@ class Player(pygame.sprite.Sprite):
         self.rect.y = 225
         self.x_speed = 10
         self.num = num
+        self.heath = 15
+        self.y_vel = 10
+        self.grav = 1
+        self.jump_height = 20
+        self.jump_speed = self.jump_height
+        self.jump = False
 
     def update(self):
         self.x_speed = 0
         keys = pygame.key.get_pressed()
         if keys[pygame.K_LEFT] and self.num == 2 and not self.rect.x < -50 :
-            self.x_speed = -10
+            self.x_speed = -20
         if keys[pygame.K_RIGHT] and self.num == 2 and not self.rect.x > WIDTH - 150:
-            self.x_speed = 10
-        if keys[pygame.K_KP0] and self.num == 2:
-            player.swing(self.num)
-        self.rect.right += self.x_speed
+            self.x_speed = 20
         if keys[pygame.K_a] and self.num == 1 and not self.rect.x < -50:
             self.x_speed = -20
         if keys[pygame.K_d] and self.num == 1 and not self.rect.x > WIDTH - 150:
             self.x_speed = 20
         if keys[pygame.K_SPACE] and self.num == 1:
             player.swing(self.num)
+        if keys[pygame.K_KP0] and self.num == 2:
+            player.swing(self.num)
+        if keys[pygame.K_UP] and self.num == 2:
+            self.jump = True
+        if self.jump:
+            self.rect.y -= self.jump_speed
+            self.jump_speed -= self.grav
+            if self.jump_speed < -self.jump_height:
+                self.jump_speed = self.jump_height
+                self.jump = False
+        if keys[pygame.K_w] and self.num == 1:
+            self.jump = True
+        if self.jump:
+            self.rect.y -= self.jump_speed
+            self.jump_speed -= self.grav
+            if self.jump_speed < -self.jump_height:
+                self.jump_speed = self.jump_height
+                self.jump = False
         self.rect.right += self.x_speed
+
+
+
+        bing = pygame.sprite.groupcollide(fists, players, True, False)
+        if bing:
+            print("1 hit")
+        bonk = pygame.sprite.groupcollide(fists2, players2, True, False)
+        if bonk:
+            print("2 hit")
     def swing(self,num):
         if num == 1:
             swings = Punch(player.rect.x + 190,player.rect.y + 150,num)
@@ -78,12 +108,17 @@ class Punch(pygame.sprite.Sprite):
             self.y_speed = 40
     def update(self):
         self.rect.x -= self.y_speed
-        bing = pygame.sprite.groupcollide(fists, players, False, False)
-        if bing:
-            print("1 hit")
-        bonk = pygame.sprite.groupcollide(fists2, players2, False, False)
-        if bonk:
-            print("2 hit")
+
+
+
+class Health(pygame.sprite.Sprite):
+    def __init__(self,x,y):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.image.load(os.path.join(img_folder, "changeLater.png")).convert()
+        self.rect = self.image.get_rect()
+        self.rect.bottom = y
+        self.rect.centerx = x
+        self.num = 10
 
 
 all_sprites=pygame.sprite.Group()
@@ -115,4 +150,3 @@ while run:  # keep looping
     all_sprites.draw(win)
     pygame.display.flip()
 pygame.quit()  # exit game
-
