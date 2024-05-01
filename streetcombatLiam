@@ -108,8 +108,9 @@ class Punch(pygame.sprite.Sprite):
             self.y_speed = 40
     def update(self):
         self.rect.x -= self.y_speed
-
-
+        self.num +=1
+        if self.num == 15:
+            self.kill()
 
 class Health(pygame.sprite.Sprite):
     def __init__(self,x,y):
