@@ -1,1 +1,167 @@
+import pygame
+import random
+import os
+from random import random, randint, seed
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+RED = (255, 0, 0)
+GREEN = (0, 255, 0)
+BLUE = (0, 0, 255)
 
+pygame.init()
+pygame.mixer.init()
+game_folder = os.path.dirname(__file__)
+img_folder = os.path.join(game_folder, "img")
+
+WIDTH = 1300
+HEIGHT = 700
+win = pygame.display.set_mode((WIDTH,HEIGHT))
+FPS = 30
+
+background = pygame.image.load(os.path.join(img_folder, "fitbg.png"))
+background_rect = background.get_rect()
+#varables
+pHealth = [100,100]
+
+
+class Player(pygame.sprite.Sprite):
+    def __init__(self,p,num):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.image.load(os.path.join(img_folder, "guy.png")).convert()
+        self.rect = self.image.get_rect()
+        self.rect.x = (WIDTH/8) * p
+        self.rect.y = 225
+        self.x_speed = 10
+        self.num = num
+        self.heath = 15
+        self.y_vel = 10
+        self.grav = 1
+        self.jump_height = 25
+        self.jump_speed = self.jump_height
+        self.jump = False
+        self.block1 = False
+        self.block2 = False
+
+    def update(self):
+        self.x_speed = 0
+        self.block2 = False
+        self.block1 = False
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_KP1] and self.num == 2 and not self.rect.x < -50 :
+            self.x_speed = -20
+        if keys[pygame.K_KP3] and self.num == 2 and not self.rect.x > WIDTH - 150:
+            self.x_speed = 20
+        if keys[pygame.K_a] and self.num == 1 and not self.rect.x < -50:
+            self.x_speed = -20
+        if keys[pygame.K_d] and self.num == 1 and not self.rect.x > WIDTH - 150:
+            self.x_speed = 20
+        if keys[pygame.K_KP5] and self.num == 2:
+            self.jump = True
+        if keys[pygame.K_KP2] and self.num == 2:
+            self.block2 = True
+        if keys[pygame.K_s] and self.num == 1:
+            self.block1 = True
+        if self.jump:
+            self.rect.y -= self.jump_speed
+            self.jump_speed -= self.grav
+            if self.jump_speed < -self.jump_height:
+                self.jump_speed = self.jump_height
+                self.jump = False
+        if keys[pygame.K_w] and self.num == 1:
+            self.jump = True
+        if self.jump:
+            self.rect.y -= self.jump_speed
+            self.jump_speed -= self.grav
+            if self.jump_speed < -self.jump_height:
+                self.jump_speed = self.jump_height
+                self.jump = False
+        self.rect.right += self.x_speed
+        bing = pygame.sprite.groupcollide(fists2, players2, True, False)
+        if bing and self.block2 is False:
+            print("1 hit")
+            pHealth[0] -= 10
+            print(pHealth)
+        bonk = pygame.sprite.groupcollide(fists, players, True, False)
+        if bonk and self.block1 is False:
+            print("2 hit")
+            pHealth[1] -=10
+            print(pHealth)
+    def swing(self,num):
+        if num == 1:
+            swings = Punch(player.rect.x + 190,player.rect.y + 180,num)
+        if num == 2:
+            swings = Punch(player2.rect.x,player2.rect.y + 180,num)
+        all_sprites.add(swings)
+        if num == 2 :
+            fists2.add(swings)
+        if num == 1:
+            fists.add(swings)
+
+
+class Punch(pygame.sprite.Sprite):
+    def __init__(self,x,y,num):
+        pygame.sprite.Sprite.__init__(self)
+        if num == 1:
+            self.image = pygame.image.load(os.path.join(img_folder, "arm1.png")).convert()
+        if num == 2:
+            self.image = pygame.image.load(os.path.join(img_folder, "arm2.png")).convert()
+        self.image.set_colorkey(BLACK)
+        self.rect = self.image.get_rect()
+        self.rect.bottom = y
+        self.rect.centerx = x
+        self.num = num
+        if num == 1 :
+            self.y_speed = -25
+        if num ==2 :
+            self.y_speed = 25
+    def update(self):
+        self.rect.x -= self.y_speed
+        self.num +=1
+        if self.num == 6:
+            self.kill()
+
+class Health(pygame.sprite.Sprite):
+    def __init__(self,x,y):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.image.load(os.path.join(img_folder, "changeLater.png")).convert()
+        self.rect = self.image.get_rect()
+        self.rect.bottom = y
+        self.rect.centerx = x
+        self.num = 10
+
+
+all_sprites=pygame.sprite.Group()
+player = Player(1,1)
+player2 = Player(6,2)
+players = pygame.sprite.Group()
+players2 = pygame.sprite.Group()
+fists = pygame.sprite.Group()
+fists2 = pygame.sprite.Group()
+players2.add(player)
+players.add(player2)
+all_sprites.add(player, player2)
+
+pygame.display.set_caption("street combat")
+clock=pygame.time.Clock()
+run = True
+while run:  # keep looping
+    clock.tick(FPS)  # refresh rate
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:  # x in top right
+            run = False
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:
+                player.swing(1)
+            if event.key == pygame.K_KP0:
+                player.swing(2)
+
+    all_sprites.update()
+    # set background Colour
+
+    win.fill(BLACK)
+    win.blit(background, background_rect)
+    # draw rectangle in position and set colour
+    # redraw the screen
+    all_sprites.draw(win)
+    pygame.display.flip()
+pygame.quit()  # exit game
