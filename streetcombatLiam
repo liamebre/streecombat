@@ -176,15 +176,16 @@ class Punch(pygame.sprite.Sprite):
 
 
 # health
-class Health(pygame.sprite.Sprite):
+class Health(pygame.sprite.Sprite,):
     def __init__(self,x,y):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load(os.path.join(img_folder, "changeLater.png")).convert()
+        self.image = pygame.image.load(os.path.join(img_folder, "PlayerHP1.png")).convert()
         self.rect = self.image.get_rect()
-        self.rect.bottom = y
-        self.rect.centerx = x
-        self.num = 10
-
+        self.rect.x = 200
+        self.rect.centerx = 500
+        self.HP = 320
+    def update(self):
+        pass
 
 all_sprites=pygame.sprite.Group()
 player = Player(1,1,nump)
@@ -193,6 +194,10 @@ players = pygame.sprite.Group()
 players2 = pygame.sprite.Group()
 fists = pygame.sprite.Group()
 fists2 = pygame.sprite.Group()
+health1 = Health(0+200, HEIGHT - 500)
+health2 = Health(WIDTH - 200, HEIGHT - 500)
+healths = pygame.sprite.Group()
+healths.add(health1, health2)
 players2.add(player)
 players.add(player2)
 all_sprites.add(player, player2)
