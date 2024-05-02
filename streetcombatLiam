@@ -18,11 +18,20 @@ HEIGHT = 700
 win = pygame.display.set_mode((WIDTH,HEIGHT))
 FPS = 30
 pHealth = [100,100]
+nump = 2
 background = pygame.image.load(os.path.join(img_folder, "fitbg.png"))
+font_name = pygame.font.match_font("arial",False,False )
+def draw_text(surf,text,size,x, y):
+    font = pygame.font.Font(font_name,size)
+    text_surface = font.render(text, True, GREEN)
+    text_rect = text_surface.get_rect()
+    text_rect.midtop = (x, y)
+    surf.blit(text_surface, text_rect)
+
 
 background_rect = background.get_rect()
 class Player(pygame.sprite.Sprite):
-    def __init__(self,p,num):
+    def __init__(self,p,num,nump):
         pygame.sprite.Sprite.__init__(self)
         if num == 1:
             self.image = pygame.image.load(os.path.join(img_folder, "guy.png")).convert()
@@ -41,6 +50,7 @@ class Player(pygame.sprite.Sprite):
         self.jump = False
         self.block1 = False
         self.block2 = False
+        self.nump = nump
 
     def update(self):
         self.x_speed = 0
@@ -80,13 +90,21 @@ class Player(pygame.sprite.Sprite):
         bing = pygame.sprite.groupcollide(fists, players, True, False)
         if bing and self.block2 is False:
             print("1 hit")
-            pHealth[0] -= 10
+            pHealth[1] -= 10
             print(pHealth)
+            if pHealth[1] == 0:
+                player2.kill()
+                self.nump -= 1
         bonk = pygame.sprite.groupcollide(fists2, players2, True, False)
         if bonk and self.block1 is False:
             print("2 hit")
-            pHealth[1] -= 10
+            pHealth[0] -= 10
+            if pHealth[0] == 0:
+                player.kill()
+                self.nump -= 1
             print(pHealth)
+        if self.nump == 1:
+            self.gameover()
     # is the fist action
     def swing(self,num,type):
         if num == 1 and type == 1:
@@ -103,7 +121,15 @@ class Player(pygame.sprite.Sprite):
         if num == 1:
             fists.add(swings)
 
-# adds attacks
+    def gameover(self):#death
+        keys = pygame.key.get_pressed()
+        print("game over")
+        draw_text(win, "game over", 76, WIDTH / 2, HEIGHT / 2 - 50)
+        if keys[pygame.K_r]:
+            self.nump = 2
+            Player.kill(self)
+            summon()
+        # adds attacks
 class Punch(pygame.sprite.Sprite):
     def __init__(self,x,y,num,type):
         pygame.sprite.Sprite.__init__(self)
@@ -145,10 +171,14 @@ class Health(pygame.sprite.Sprite):
         self.rect.centerx = x
         self.num = 10
 
+def summon():
+    player = Player(1, 1, nump)
+    player2 = Player(6, 2, nump)
+    all_sprites.add(player, player2)
 
 all_sprites=pygame.sprite.Group()
-player = Player(1,1)
-player2 = Player(6,2)
+player = Player(1,1,nump)
+player2 = Player(6,2,nump)
 players = pygame.sprite.Group()
 players2 = pygame.sprite.Group()
 fists = pygame.sprite.Group()
