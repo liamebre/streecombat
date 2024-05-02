@@ -112,9 +112,9 @@ class Player(pygame.sprite.Sprite):
         if num == 2 and type == 1 :
             swings = Punch(player2.rect.x,player2.rect.y + 180,num,type)
         if num == 1 and type == 2:
-            swings = Punch(player.rect.x + 190, player.rect.y + 180, num,type)
+            swings = Punch(player.rect.x + 190, player.rect.y + 180, num, type)
         if num == 2 and type == 2:
-            swings = Punch(player2.rect.x, player2.rect.y + 180, num,type)
+            swings = Punch(player2.rect.x, player2.rect.y + 180, num, type)
         all_sprites.add(swings)
         if num == 2:
             fists2.add(swings)
@@ -123,12 +123,12 @@ class Player(pygame.sprite.Sprite):
 
     def gameover(self):#death
         keys = pygame.key.get_pressed()
-        print("game over")
         draw_text(win, "game over", 76, WIDTH / 2, HEIGHT / 2 - 50)
         if keys[pygame.K_r]:
             self.nump = 2
             Player.kill(self)
-            summon()
+
+
         # adds attacks
 class Punch(pygame.sprite.Sprite):
     def __init__(self,x,y,num,type):
@@ -157,10 +157,12 @@ class Punch(pygame.sprite.Sprite):
         self.rect.x -= self.y_speed
         # gives the attack its range
         self.num +=1
-        if self.num == 6 and self.type == 1 :
+        if self.num == 6 and self.type == 1:
             self.kill()
         if self.num == 20 and self.type == 2:
             self.kill()
+
+
 # health
 class Health(pygame.sprite.Sprite):
     def __init__(self,x,y):
@@ -171,10 +173,6 @@ class Health(pygame.sprite.Sprite):
         self.rect.centerx = x
         self.num = 10
 
-def summon():
-    player = Player(1, 1, nump)
-    player2 = Player(6, 2, nump)
-    all_sprites.add(player, player2)
 
 all_sprites=pygame.sprite.Group()
 player = Player(1,1,nump)
