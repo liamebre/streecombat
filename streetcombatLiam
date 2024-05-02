@@ -8,6 +8,8 @@ RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
 
+game_state = "start"
+
 pygame.init()
 pygame.mixer.init()
 game_folder = os.path.dirname(__file__)
@@ -21,17 +23,21 @@ pHealth = [100,100]
 nump = 2
 background = pygame.image.load(os.path.join(img_folder, "fitbg.png"))
 font_name = pygame.font.match_font("arial",False,False )
+
+
 def draw_text(surf,text,size,x, y):
     font = pygame.font.Font(font_name,size)
-    text_surface = font.render(text, True, GREEN)
+    text_surface = font.render(text, True, RED)
     text_rect = text_surface.get_rect()
     text_rect.midtop = (x, y)
     surf.blit(text_surface, text_rect)
 
 
 background_rect = background.get_rect()
+
+
 class Player(pygame.sprite.Sprite):
-    def __init__(self,p,num,nump):
+    def __init__(self, p, num, nump):
         pygame.sprite.Sprite.__init__(self)
         if num == 1:
             self.image = pygame.image.load(os.path.join(img_folder, "guy.png")).convert()
@@ -57,17 +63,17 @@ class Player(pygame.sprite.Sprite):
         self.block2 = False
         self.block1 = False
         keys = pygame.key.get_pressed()  # movement
-        if keys[pygame.K_KP1] and self.num == 2 and not self.rect.x < -50 :
+        if keys[pygame.K_j] and self.num == 2 and not self.rect.x < -50 and self.nump ==2 :
             self.x_speed = -20
-        if keys[pygame.K_KP3] and self.num == 2 and not self.rect.x > WIDTH - 150:
+        if keys[pygame.K_l] and self.num == 2 and not self.rect.x > WIDTH - 150 and self.nump ==2 :
             self.x_speed = 20
-        if keys[pygame.K_a] and self.num == 1 and not self.rect.x < -50:
+        if keys[pygame.K_a] and self.num == 1 and not self.rect.x < -50 and self.nump ==2 :
             self.x_speed = -20
-        if keys[pygame.K_d] and self.num == 1 and not self.rect.x > WIDTH - 150:
+        if keys[pygame.K_d] and self.num == 1 and not self.rect.x > WIDTH - 150 and self.nump ==2 :
             self.x_speed = 20
-        if keys[pygame.K_KP5] and self.num == 2:
+        if keys[pygame.K_i] and self.num == 2 and self.nump ==2 :
             self.jump = True
-        if keys[pygame.K_KP2] and self.num == 2:  # failed blocking
+        if keys[pygame.K_k] and self.num == 2:  # failed blocking
             self.block2 = True
         if keys[pygame.K_s] and self.num == 1:
             self.block1 = True
@@ -77,7 +83,7 @@ class Player(pygame.sprite.Sprite):
             if self.jump_speed < -self.jump_height:
                 self.jump_speed = self.jump_height
                 self.jump = False
-        if keys[pygame.K_w] and self.num == 1:
+        if keys[pygame.K_w] and self.num == 1 and self.nump == 2 :
             self.jump = True
         if self.jump:  # jumping 2
             self.rect.y -= self.jump_speed
@@ -104,32 +110,38 @@ class Player(pygame.sprite.Sprite):
                 self.nump -= 1
             print(pHealth)
         if self.nump == 1:
-            self.gameover()
+            menu.gameover(self.nump)
     # is the fist action
     def swing(self,num,type):
-        if num == 1 and type == 1:
-            swings = Punch(player.rect.x + 190,player.rect.y + 180,num,type)
-        if num == 2 and type == 1 :
-            swings = Punch(player2.rect.x,player2.rect.y + 180,num,type)
-        if num == 1 and type == 2:
-            swings = Punch(player.rect.x + 190, player.rect.y + 180, num, type)
-        if num == 2 and type == 2:
-            swings = Punch(player2.rect.x, player2.rect.y + 180, num, type)
-        all_sprites.add(swings)
-        if num == 2:
-            fists2.add(swings)
-        if num == 1:
-            fists.add(swings)
+        if self.nump >1:
+            if num == 1 and type == 1:
+                swings = Punch(player.rect.x + 190,player.rect.y + 180,num,type)
+            if num == 2 and type == 1 :
+                swings = Punch(player2.rect.x,player2.rect.y + 180,num,type)
+            if num == 1 and type == 2:
+                swings = Punch(player.rect.x + 190, player.rect.y + 180, num, type)
+            if num == 2 and type == 2:
+                swings = Punch(player2.rect.x, player2.rect.y + 180, num, type)
+            all_sprites.add(swings)
+            if num == 2:
+                fists2.add(swings)
+            if num == 1:
+                fists.add(swings)
 
+
+class menu():
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
     def gameover(self):#death
         keys = pygame.key.get_pressed()
-        draw_text(win, "game over", 76, WIDTH / 2, HEIGHT / 2 - 50)
+        draw_text(win, "game over", 76, WIDTH / 2, HEIGHT / 2 - 100)
+        draw_text(win, "press (r) to restart", 76, WIDTH / 2, HEIGHT / 2 )
         if keys[pygame.K_r]:
-            self.nump = 2
-            Player.kill(self)
+            print("restart")
 
 
-        # adds attacks
+
+# adds attacks
 class Punch(pygame.sprite.Sprite):
     def __init__(self,x,y,num,type):
         pygame.sprite.Sprite.__init__(self)
@@ -189,7 +201,8 @@ pygame.display.set_caption("street combat")
 clock=pygame.time.Clock()
 run = True
 while run:  # keep looping
-    clock.tick(FPS)  # refresh rate
+    clock.tick(FPS)
+    # refresh rate
     for event in pygame.event.get():
         if event.type == pygame.QUIT:  # x in top right
             run = False
@@ -198,18 +211,23 @@ while run:  # keep looping
                 player.swing(1,1)
             if event.key == pygame.K_f:
                 player.swing(1,2)
-            if event.key == pygame.K_KP0:
+            if event.key == pygame.K_SEMICOLON:
                 player.swing(2,1)
-            if event.key == pygame.K_KP_ENTER:
+            if event.key == pygame.K_QUOTE:
                 player.swing(2,2)
-
-    all_sprites.update()
-    # set background Colour
-
-    win.fill(BLACK)
-    win.blit(background, background_rect)
-    # draw rectangle in position and set colour
-    # redraw the screen
-    all_sprites.draw(win)
-    pygame.display.flip()
+            # set background Colour
+    if game_state == "start":
+        win.fill(BLACK)
+        draw_text(win, "press (t) to start ", 76, WIDTH / 2, HEIGHT / 2 - 50)
+        keys = pygame.key.get_pressed()  # movement
+        if keys[pygame.K_t]:
+            game_state = "play"
+    if game_state == "play":
+        win.fill(BLACK)
+        win.blit(background, background_rect)
+        all_sprites.update()
+        # draw rectangle in position and set colour
+        # redraw the screen
+        all_sprites.draw(win)
+        pygame.display.flip()
 pygame.quit()  # exit game
