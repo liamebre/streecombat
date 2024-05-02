@@ -24,10 +24,13 @@ background_rect = background.get_rect()
 class Player(pygame.sprite.Sprite):
     def __init__(self,p,num):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load(os.path.join(img_folder, "guy.png")).convert()
+        if num == 1:
+            self.image = pygame.image.load(os.path.join(img_folder, "guy.png")).convert()
+        if num == 2:
+            self.image = pygame.image.load(os.path.join(img_folder, "guy2.png")).convert()
         self.rect = self.image.get_rect()
         self.rect.x = (WIDTH/8) * p
-        self.rect.y = 225
+        self.rect.bottom = HEIGHT - 165
         self.x_speed = 10
         self.num = num
         self.heath = 15
