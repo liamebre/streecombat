@@ -215,16 +215,34 @@ while run:  # keep looping
             run = False
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
-                player.swing(1,1)
+                player.swing(1, 1)
             if event.key == pygame.K_f:
-                player.swing(1,2)
+                player.swing(1, 2)
             if event.key == pygame.K_SEMICOLON:
-                player.swing(2,1)
+                player.swing(2, 1)
             if event.key == pygame.K_QUOTE:
-                player.swing(2,2)
+                player.swing(2, 2)
             # set background Colour
     if player.numb == 1:
         game_state = "gameover"
+    if game_state == "gameover":
+        win.fill(WHITE)
+        draw_text(win, "game over", 76, WIDTH / 2, HEIGHT / 2 - 100)
+        draw_text(win, "press (r) to restart", 76, WIDTH / 2, HEIGHT / 2)
+        keys = pygame.key.get_pressed()  # movement
+        if keys[pygame.K_r]:
+            game_state = "play"
+            player2.kill()
+            player.kill()
+            player = Player(1, 1, nump)
+            player2 = Player(6, 2, nump)
+            players = pygame.sprite.Group()
+            players2 = pygame.sprite.Group()
+            players2.add(player)
+            players.add(player2)
+            all_sprites.add(player, player2)
+            pHealth = [100, 100]
+
     if game_state == "start":
         win.fill(BLACK)
         draw_text(win, "press (r) to start ", 76, WIDTH / 2, HEIGHT / 2 - 50)
@@ -236,13 +254,6 @@ while run:  # keep looping
         win.blit(background, background_rect)
         all_sprites.update()
         all_sprites.draw(win)
-    if game_state == "gameover":
-        win.fill(WHITE)
-        draw_text(win, "game over", 76, WIDTH / 2, HEIGHT / 2 - 100)
-        draw_text(win, "press (r) to restart", 76, WIDTH / 2, HEIGHT / 2)
-        keys = pygame.key.get_pressed()  # movement
-        if keys[pygame.K_r]:
-            game_state = "play"
         # draw rectangle in position and set colour
         # redraw the screen
     pygame.display.flip()
