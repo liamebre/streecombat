@@ -22,6 +22,8 @@ FPS = 30
 pHealth = [100,100]
 nump = 2
 background = pygame.image.load(os.path.join(img_folder, "fitbg.png"))
+start = pygame.image.load(os.path.join(img_folder, "start.png"))
+gameover = pygame.image.load(os.path.join(img_folder, "gameover.png"))
 font_name = pygame.font.match_font("arial",False,False )
 
 
@@ -227,8 +229,7 @@ while run:  # keep looping
         game_state = "gameover"
     if game_state == "gameover":
         win.fill(WHITE)
-        draw_text(win, "game over", 76, WIDTH / 2, HEIGHT / 2 - 100)
-        draw_text(win, "press (r) to restart", 76, WIDTH / 2, HEIGHT / 2)
+        win.blit(gameover, background_rect)
         keys = pygame.key.get_pressed()  # movement
         if keys[pygame.K_r]:
             game_state = "play"
@@ -245,7 +246,7 @@ while run:  # keep looping
 
     if game_state == "start":
         win.fill(BLACK)
-        draw_text(win, "press (r) to start ", 76, WIDTH / 2, HEIGHT / 2 - 50)
+        win.blit(start, background_rect)
         keys = pygame.key.get_pressed()  # movement
         if keys[pygame.K_r]:
             game_state = "play"
