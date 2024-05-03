@@ -1,3 +1,4 @@
+
 import pygame
 import random
 import os
@@ -8,6 +9,8 @@ RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
 
+game_state = "start"
+
 pygame.init()
 pygame.mixer.init()
 game_folder = os.path.dirname(__file__)
@@ -17,20 +20,41 @@ WIDTH = 1300
 HEIGHT = 700
 win = pygame.display.set_mode((WIDTH,HEIGHT))
 FPS = 30
+pHealth = [320,320]
+phithp = [0,0]
+#list of images
+p1imgHP = ['PlayerHP1.png', 'PlayerHP2.png', 'PlayerHP3.png', 'PlayerHP4.png', 'PlayerHP5.png', 'PlayerHP6.png', 'PlayerHP7.png', 'PlayerHP8.png', 'PlayerHP9.png', 'PlayerHP10.png', 'PlayerHP11.png', 'PlayerHP12.png', 'PlayerHP13.png', 'PlayerHP14.png', 'PlayerHP15.png', 'PlayerHP16.png', 'PlayerHP17.png', 'PlayerHP18.png', 'PlayerHP19.png', 'PlayerHP20.png', 'PlayerHP21.png', 'PlayerHP22.png', 'PlayerHP23.png', 'PlayerHP24.png', 'PlayerHP25.png', 'PlayerHP26.png', 'PlayerHP27.png', 'PlayerHP28.png', 'PlayerHP29.png', 'PlayerHP30.png', 'PlayerHP31.png', 'PlayerHP32.png', 'PlayerHP32.png']
+p2imgHP = ['PlayertwoHP1.png', 'PlayertwoHP2.png', 'PlayertwoHP3.png', 'PlayertwoHP4.png', 'PlayertwoHP5.png', 'PlayertwoHP6.png', 'PlayertwoHP7.png', 'PlayertwoHP8.png', 'PlayertwoHP9.png', 'PlayertwoHP10.png', 'PlayertwoHP11.png', 'PlayertwoHP12.png', 'PlayertwoHP13.png', 'PlayertwoHP14.png', 'PlayertwoHP15.png', 'PlayertwoHP16.png', 'PlayertwoHP17.png', 'PlayertwoHP18.png', 'PlayertwoHP19.png', 'PlayertwoHP20.png', 'PlayertwoHP21.png', 'PlayertwoHP22.png', 'PlayertwoHP23.png', 'PlayertwoHP24.png', 'PlayertwoHP25.png', 'PlayertwoHP26.png', 'PlayertwoHP27.png', 'PlayertwoHP28.png', 'PlayertwoHP29.png', 'PlayertwoHP30.png', 'PlayertwoHP31.png', 'PlayertwoHP32.png', 'PlayertwoHP32.png']
 
+
+
+
+nump = 2
 background = pygame.image.load(os.path.join(img_folder, "fitbg.png"))
+font_name = pygame.font.match_font("arial",False,False )
+
+
+def draw_text(surf,text,size,x, y):
+    font = pygame.font.Font(font_name,size)
+    text_surface = font.render(text, True, RED)
+    text_rect = text_surface.get_rect()
+    text_rect.midtop = (x, y)
+    surf.blit(text_surface, text_rect)
+
+
 background_rect = background.get_rect()
-#varables
-pHealth = [100,100]
 
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self,p,num):
+    def __init__(self, p, num, nump):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load(os.path.join(img_folder, "guy.png")).convert()
+        if num == 1:
+            self.image = pygame.image.load(os.path.join(img_folder, "guy.png")).convert()
+        if num == 2:
+            self.image = pygame.image.load(os.path.join(img_folder, "guy2.png")).convert()
         self.rect = self.image.get_rect()
         self.rect.x = (WIDTH/8) * p
-        self.rect.y = 225
+        self.rect.bottom = HEIGHT - 165
         self.x_speed = 10
         self.num = num
         self.heath = 15
@@ -41,127 +65,211 @@ class Player(pygame.sprite.Sprite):
         self.jump = False
         self.block1 = False
         self.block2 = False
+        self.numb = nump
 
     def update(self):
         self.x_speed = 0
         self.block2 = False
         self.block1 = False
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_KP1] and self.num == 2 and not self.rect.x < -50 :
+        keys = pygame.key.get_pressed()  # movement
+        if keys[pygame.K_j] and self.num == 2 and not self.rect.x < -50 and self.numb ==2 :
             self.x_speed = -20
-        if keys[pygame.K_KP3] and self.num == 2 and not self.rect.x > WIDTH - 150:
+        if keys[pygame.K_l] and self.num == 2 and not self.rect.x > WIDTH - 150 and self.numb ==2 :
             self.x_speed = 20
-        if keys[pygame.K_a] and self.num == 1 and not self.rect.x < -50:
+        if keys[pygame.K_a] and self.num == 1 and not self.rect.x < -50 and self.numb ==2 :
             self.x_speed = -20
-        if keys[pygame.K_d] and self.num == 1 and not self.rect.x > WIDTH - 150:
+        if keys[pygame.K_d] and self.num == 1 and not self.rect.x > WIDTH - 150 and self.numb ==2 :
             self.x_speed = 20
-        if keys[pygame.K_KP5] and self.num == 2:
+        if keys[pygame.K_i] and self.num == 2 and self.numb ==2 :
             self.jump = True
-        if keys[pygame.K_KP2] and self.num == 2:
+        if keys[pygame.K_k] and self.num == 2:  # failed blocking
             self.block2 = True
         if keys[pygame.K_s] and self.num == 1:
             self.block1 = True
-        if self.jump:
+        if self.jump:  # jumping 1
             self.rect.y -= self.jump_speed
             self.jump_speed -= self.grav
             if self.jump_speed < -self.jump_height:
                 self.jump_speed = self.jump_height
                 self.jump = False
-        if keys[pygame.K_w] and self.num == 1:
+        if keys[pygame.K_w] and self.num == 1 and self.numb == 2 :
             self.jump = True
-        if self.jump:
+        if self.jump:  # jumping 2
             self.rect.y -= self.jump_speed
             self.jump_speed -= self.grav
             if self.jump_speed < -self.jump_height:
                 self.jump_speed = self.jump_height
                 self.jump = False
         self.rect.right += self.x_speed
-        bing = pygame.sprite.groupcollide(fists2, players2, True, False)
+        # checks for collsion
+        bing = pygame.sprite.groupcollide(fists, players, True, False)
         if bing and self.block2 is False:
             print("1 hit")
-            pHealth[0] -= 10
+            pHealth[1] -= 10
+            phithp[1] += 1
             print(pHealth)
-        bonk = pygame.sprite.groupcollide(fists, players, True, False)
+            if pHealth[1] == 0:
+                player2.kill()
+                self.numb -= 1
+                menu.gameover(self.numb)
+                phithp = [0, 0]
+        bonk = pygame.sprite.groupcollide(fists2, players2, True, False)
         if bonk and self.block1 is False:
             print("2 hit")
-            pHealth[1] -=10
+            pHealth[0] -= 10
+            phithp[0] += 1
+            if pHealth[0] == 0:
+                player.kill()
+                self.numb -= 1
+                menu.gameover(self.numb)
+                phithp = [0, 0]
             print(pHealth)
-    def swing(self,num):
-        if num == 1:
-            swings = Punch(player.rect.x + 190,player.rect.y + 180,num)
-        if num == 2:
-            swings = Punch(player2.rect.x,player2.rect.y + 180,num)
-        all_sprites.add(swings)
-        if num == 2 :
-            fists2.add(swings)
-        if num == 1:
-            fists.add(swings)
 
 
-class Punch(pygame.sprite.Sprite):
-    def __init__(self,x,y,num):
+    # is the fist action
+    def swing(self,num,type):
+        if self.numb >1:
+            if num == 1 and type == 1:
+                swings = Punch(player.rect.x + 190,player.rect.y + 180,num,type)
+            if num == 2 and type == 1 :
+                swings = Punch(player2.rect.x,player2.rect.y + 180,num,type)
+            if num == 1 and type == 2:
+                swings = Punch(player.rect.x + 190, player.rect.y + 180, num, type)
+            if num == 2 and type == 2:
+                swings = Punch(player2.rect.x, player2.rect.y + 180, num, type)
+            all_sprites.add(swings)
+            if num == 2:
+                fists2.add(swings)
+            if num == 1:
+                fists.add(swings)
+
+
+class menu():
+    def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        if num == 1:
+    def gameover(self):#death
+        keys = pygame.key.get_pressed()
+        draw_text(win, "game over", 76, WIDTH / 2, HEIGHT / 2 - 100)
+        draw_text(win, "press (r) to restart", 76, WIDTH / 2, HEIGHT / 2 )
+        if keys[pygame.K_r]:
+            print("restart")
+
+
+
+# adds attacks
+class Punch(pygame.sprite.Sprite):
+    def __init__(self,x,y,num,type):
+        pygame.sprite.Sprite.__init__(self)
+        if num == 1 and type == 1 :
             self.image = pygame.image.load(os.path.join(img_folder, "arm1.png")).convert()
-        if num == 2:
+        if num == 2 and type == 1:
             self.image = pygame.image.load(os.path.join(img_folder, "arm2.png")).convert()
+        if num == 1 and type == 2 :
+            self.image = pygame.image.load(os.path.join(img_folder, "bullet1.png")).convert()
+        if num == 2 and type == 2:
+            self.image = pygame.image.load(os.path.join(img_folder, "bullet.png")).convert()
         self.image.set_colorkey(BLACK)
         self.rect = self.image.get_rect()
         self.rect.bottom = y
         self.rect.centerx = x
         self.num = num
-        if num == 1 :
+        self.type = type
+        if num == 1:
             self.y_speed = -25
-        if num ==2 :
+        if num == 2:
             self.y_speed = 25
+
     def update(self):
+        # makes fist move
         self.rect.x -= self.y_speed
+        # gives the attack its range
         self.num +=1
-        if self.num == 6:
+        if self.num == 6 and self.type == 1:
+            self.kill()
+        if self.num == 20 and self.type == 2:
             self.kill()
 
-class Health(pygame.sprite.Sprite):
+
+# health
+class Health(pygame.sprite.Sprite,):
     def __init__(self,x,y):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load(os.path.join(img_folder, "changeLater.png")).convert()
+        self.image = pygame.image.load(os.path.join(img_folder, p1imgHP[phithp[0]])).convert()
         self.rect = self.image.get_rect()
-        self.rect.bottom = y
-        self.rect.centerx = x
-        self.num = 10
+        self.rect.x = x
+        self.rect.y = y
+        self.HP = 320
+    def update(self):
+        health1.image = pygame.image.load(os.path.join(img_folder, p1imgHP[phithp[0]])).convert()
+        health2.image = pygame.image.load(os.path.join(img_folder, p2imgHP[phithp[1]])).convert()
 
 
 all_sprites=pygame.sprite.Group()
-player = Player(1,1)
-player2 = Player(6,2)
+player = Player(1,1,nump)
+player2 = Player(6,2,nump)
 players = pygame.sprite.Group()
 players2 = pygame.sprite.Group()
 fists = pygame.sprite.Group()
 fists2 = pygame.sprite.Group()
+health1 = Health(25,  10)
+health2 = Health(WIDTH - 225, 10)
+healths = pygame.sprite.Group()
+healths.add(health1, health2)
 players2.add(player)
 players.add(player2)
-all_sprites.add(player, player2)
+all_sprites.add(player, player2,healths)
 
 pygame.display.set_caption("street combat")
 clock=pygame.time.Clock()
 run = True
 while run:  # keep looping
-    clock.tick(FPS)  # refresh rate
+    clock.tick(FPS)
+    # refresh rate
     for event in pygame.event.get():
         if event.type == pygame.QUIT:  # x in top right
             run = False
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
-                player.swing(1)
-            if event.key == pygame.K_KP0:
-                player.swing(2)
+                player.swing(1, 1)
+            if event.key == pygame.K_f:
+                player.swing(1, 2)
+            if event.key == pygame.K_SEMICOLON:
+                player.swing(2, 1)
+            if event.key == pygame.K_QUOTE:
+                player.swing(2, 2)
+            # set background Colour
+    if player.numb == 1:
+        game_state = "gameover"
+    if game_state == "gameover":
+        win.fill(WHITE)
+        draw_text(win, "game over", 76, WIDTH / 2, HEIGHT / 2 - 100)
+        draw_text(win, "press (r) to restart", 76, WIDTH / 2, HEIGHT / 2)
+        keys = pygame.key.get_pressed()  # movement
+        if keys[pygame.K_r]:
+            game_state = "play"
+            player2.kill()
+            player.kill()
+            player = Player(1, 1, nump)
+            player2 = Player(6, 2, nump)
+            players = pygame.sprite.Group()
+            players2 = pygame.sprite.Group()
+            players2.add(player)
+            players.add(player2)
+            all_sprites.add(player, player2)
+            pHealth = [100, 100]
 
-    all_sprites.update()
-    # set background Colour
-
-    win.fill(BLACK)
-    win.blit(background, background_rect)
-    # draw rectangle in position and set colour
-    # redraw the screen
-    all_sprites.draw(win)
+    if game_state == "start":
+        win.fill(BLACK)
+        draw_text(win, "press (r) to start ", 76, WIDTH / 2, HEIGHT / 2 - 50)
+        keys = pygame.key.get_pressed()  # movement
+        if keys[pygame.K_r]:
+            game_state = "play"
+    if game_state == "play":
+        win.fill(BLACK)
+        win.blit(background, background_rect)
+        all_sprites.update()
+        all_sprites.draw(win)
+        # draw rectangle in position and set colour
+        # redraw the screen
     pygame.display.flip()
 pygame.quit()  # exit game
