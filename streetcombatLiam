@@ -1,3 +1,4 @@
+
 import pygame
 import random
 import os
@@ -16,7 +17,7 @@ game_folder = os.path.dirname(__file__)
 img_folder = os.path.join(game_folder, "img")
 
 numh = 0
-numh2 = 0
+numh2 = [0]
 WIDTH = 1300
 HEIGHT = 700
 win = pygame.display.set_mode((WIDTH,HEIGHT))
@@ -114,29 +115,29 @@ class Player(pygame.sprite.Sprite):
         # checks for collsion
         bing = pygame.sprite.groupcollide(fists, players, True, False)
         if bing and self.block2 is False:
-            print("1 hit")
             pHealth[1] -= 10
-            self.numh += 1
-            print(pHealth)
+            #self.numh += 1
+            numh2[0] += 1
             if pHealth[1] == 0:
                 player2.kill()
                 self.numb -= 1
+                numh2[0] = 0
                 menu.gameover(self.numb)
         bonk = pygame.sprite.groupcollide(fists2, players2, True, False)
         if bonk and self.block1 is False:
-            print("2 hit")
-            pHealth[0] -= 10
+            pHealth[0] -= 1
             self.numh += 1
             if pHealth[0] == 0:
                 player.kill()
                 self.numb -= 1
+                numh2[0] = 0
                 menu.gameover(self.numb)
-            print(pHealth)
 
 
     # is the fist action
-    def swing(self,num,type):
-        if self.numb >1:
+    def swing(self,num,type,game_state):
+        self.game_state = game_state
+        if self.numb >1 and self.game_state == "play":
             if num == 1 and type == 1:
                 swings = Punch(player.rect.x + 190,player.rect.y + 180,num,type)
             if num == 2 and type == 1 :
@@ -205,6 +206,7 @@ class Health(pygame.sprite.Sprite,):
         self.HP = 320
     def update(self):
         self.image = pygame.image.load(os.path.join(img_folder, p1imgHP[player.numh])).convert()
+        health2.image = pygame.image.load(os.path.join(img_folder, p2imgHP[numh2[0]])).convert()
 
 
 all_sprites=pygame.sprite.Group()
@@ -233,13 +235,13 @@ while run:  # keep looping
             run = False
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
-                player.swing(1, 1)
+                player.swing(1, 1,game_state)
             if event.key == pygame.K_f:
-                player.swing(1, 2)
+                player.swing(1, 2,game_state)
             if event.key == pygame.K_SEMICOLON:
-                player.swing(2, 1)
+                player.swing(2, 1,game_state)
             if event.key == pygame.K_QUOTE:
-                player.swing(2, 2)
+                player.swing(2, 2,game_state)
             # set background Colour
     if player.numb == 1:
         game_state = "gameover"
