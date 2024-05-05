@@ -41,6 +41,8 @@ nump = 2
 background = pygame.image.load(os.path.join(img_folder, "fitbg.png"))
 start = pygame.image.load(os.path.join(img_folder, "start.png"))
 gameover = pygame.image.load(os.path.join(img_folder, "gameover.png"))
+ponew = pygame.image.load(os.path.join(img_folder, "fitbg.png"))
+ptwow = pygame.image.load(os.path.join(img_folder, "fitbg.png"))
 font_name = pygame.font.match_font("arial", False, False)
 
 
@@ -250,7 +252,17 @@ while run:  # keep looping
                 player.swing(2, 2, game_state)
             # set background Colour
     if player.numb == 1:
-        game_state = "gameover"
+        game_state = "winner"
+    if game_state == "winner":
+        if pHealth[0] > pHealth[1]:
+            win.fill(BLACK)
+            win.blit(ponew, background_rect)
+        if pHealth[1] > pHealth[0]:
+            win.fill(BLACK)
+            win.blit(ptwow, background_rect)
+        keys = pygame.key.get_pressed()  # movement
+        if keys[pygame.K_t]:
+            game_state = "gameover"
     if game_state == "gameover":
         win.fill(WHITE)
         win.blit(gameover, background_rect)
