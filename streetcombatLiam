@@ -22,6 +22,7 @@ WIDTH = 1300
 HEIGHT = 700
 win = pygame.display.set_mode((WIDTH,HEIGHT))
 FPS = 30
+over = False
 pHealth = [320,320]
 p1imgHP = ['PlayerHP1.png', 'PlayerHP2.png', 'PlayerHP3.png', 'PlayerHP4.png', 'PlayerHP5.png', 'PlayerHP6.png',
            'PlayerHP7.png', 'PlayerHP8.png', 'PlayerHP9.png', 'PlayerHP10.png', 'PlayerHP11.png', 'PlayerHP12.png',
@@ -41,8 +42,8 @@ nump = 2
 background = pygame.image.load(os.path.join(img_folder, "fitbg.png"))
 start = pygame.image.load(os.path.join(img_folder, "start.png"))
 gameover = pygame.image.load(os.path.join(img_folder, "gameover.png"))
-ponew = pygame.image.load(os.path.join(img_folder, "fitbg.png"))
-ptwow = pygame.image.load(os.path.join(img_folder, "fitbg.png"))
+ponew = pygame.image.load(os.path.join(img_folder, "p1win.png"))
+ptwow = pygame.image.load(os.path.join(img_folder, "p2win.png"))
 font_name = pygame.font.match_font("arial", False, False)
 
 
@@ -252,8 +253,8 @@ while run:  # keep looping
                 player.swing(2, 2, game_state)
             # set background Colour
     if player.numb == 1:
-        game_state = "winner"
-    if game_state == "winner":
+        game_state = "gameover"
+    if game_state == "gameover":
         if pHealth[0] > pHealth[1]:
             win.fill(BLACK)
             win.blit(ponew, background_rect)
@@ -261,32 +262,31 @@ while run:  # keep looping
             win.fill(BLACK)
             win.blit(ptwow, background_rect)
         keys = pygame.key.get_pressed()  # movement
-        if keys[pygame.K_t]:
-            game_state = "gameover"
-    if game_state == "gameover":
-        win.fill(WHITE)
-        win.blit(gameover, background_rect)
-        keys = pygame.key.get_pressed()  # movement
-        if keys[pygame.K_r]:
-            game_state = "play"
-            player2.kill()
-            player.kill()
-            health1.kill()
-            health2.kill()
-            health1 = Health(25, 10, )
-            health2 = Health(WIDTH - 225, 10, )
-            healths = pygame.sprite.Group()
-            healths.add(health1, health2)
-            healths = pygame.sprite.Group()
-            healths.add(health1, health2)
-            player = Player(1, 1, nump, numh)
-            player2 = Player(6, 2, nump, numh2)
-            players = pygame.sprite.Group()
-            players2 = pygame.sprite.Group()
-            players2.add(player)
-            players.add(player2)
-            all_sprites.add(player, player2, healths)
-            pHealth = [320, 320]
+        if keys[pygame.K_t] or over is True:
+            over = True
+            win.fill(WHITE)
+            win.blit(gameover, background_rect)
+            keys = pygame.key.get_pressed()  # movement
+            if keys[pygame.K_r]:
+                game_state = "play"
+                player2.kill()
+                player.kill()
+                health1.kill()
+                health2.kill()
+                health1 = Health(25, 10, )
+                health2 = Health(WIDTH - 225, 10, )
+                healths = pygame.sprite.Group()
+                healths.add(health1, health2)
+                healths = pygame.sprite.Group()
+                healths.add(health1, health2)
+                player = Player(1, 1, nump, numh)
+                player2 = Player(6, 2, nump, numh2)
+                players = pygame.sprite.Group()
+                players2 = pygame.sprite.Group()
+                players2.add(player)
+                players.add(player2)
+                all_sprites.add(player, player2, healths)
+                pHealth = [320, 320]
 
     if game_state == "start":
         win.fill(BLACK)
