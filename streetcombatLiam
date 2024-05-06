@@ -11,6 +11,7 @@ BLUE = (0, 0, 255)
 
 game_state = "start"
 over = False
+playerpng = ["guy.png","guy2.png","guy3.png"]
 
 pygame.init()
 pygame.mixer.init()
@@ -37,7 +38,6 @@ p2imgHP = ['PlayertwoHP1.png', 'PlayertwoHP2.png', 'PlayertwoHP3.png', 'Playertw
            'PlayertwoHP21.png', 'PlayertwoHP22.png', 'PlayertwoHP23.png', 'PlayertwoHP24.png', 'PlayertwoHP25.png',
            'PlayertwoHP26.png', 'PlayertwoHP27.png', 'PlayertwoHP28.png', 'PlayertwoHP29.png', 'PlayertwoHP30.png',
            'PlayertwoHP31.png', 'PlayertwoHP32.png', 'PlayertwoHP32.png']
-
 nump = 2
 background = pygame.image.load(os.path.join(img_folder, "fitbg.png"))
 start = pygame.image.load(os.path.join(img_folder, "start.png"))
@@ -59,12 +59,12 @@ background_rect = background.get_rect()
 
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, p, num, nump, numh):
+    def __init__(self, p, num, nump, numh,image):
         pygame.sprite.Sprite.__init__(self)
         if num == 1:
-            self.image = pygame.image.load(os.path.join(img_folder, "guy.png")).convert()
+            self.image = pygame.image.load(os.path.join(img_folder, image)).convert()
         if num == 2:
-            self.image = pygame.image.load(os.path.join(img_folder, "guy2.png")).convert()
+            self.image = pygame.image.load(os.path.join(img_folder, image)).convert()
         self.rect = self.image.get_rect()
         self.rect.x = (WIDTH/8) * p
         self.rect.bottom = HEIGHT - 165
@@ -203,9 +203,23 @@ class Health(pygame.sprite.Sprite,):
         health2.image = pygame.image.load(os.path.join(img_folder, p2imgHP[numh2[0]])).convert()
 
 
+class Choose(pygame.sprite.Sprite):
+    def __init__(self, x, y,skin):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.image.load(os.path.join(img_folder,skin)).convert()
+        self.image.set_colorkey(BLACK)
+        self.rect = self.image.get_rect()
+        self.rect.center = (x, y)
+
+choices = pygame.sprite.Group()
+for i in range(len(playerpng)):
+    c = Choose(300 * (i+1) , 350,playerpng[i],)
+    choices.add(c)
+
+
 all_sprites=pygame.sprite.Group()
-player = Player(1,1,nump,numh)
-player2 = Player(6,2,nump,numh2)
+player = Player(1,1,nump,numh,playerpng[0])
+player2 = Player(6,2,nump,numh2,playerpng[1])
 players = pygame.sprite.Group()
 players2 = pygame.sprite.Group()
 fists = pygame.sprite.Group()
@@ -253,13 +267,11 @@ while run:  # keep looping
             win.blit(gameover, background_rect)
             keys = pygame.key.get_pressed()  # movement
             if keys[pygame.K_r]:
-                game_state = "play"
+                game_state = "choose"
                 player2.kill()
                 player.kill()
-                player = Player(1, 1, nump,numh)
-                player2 = Player(6, 2, nump,numh2)
-                players = pygame.sprite.Group()
-                players2 = pygame.sprite.Group()
+                player = Player(1, 1, nump,numh,playerpng[0])
+                player2 = Player(6, 2, nump,numh2,playerpng[1])
                 players2.add(player)
                 players.add(player2)
                 all_sprites.add(player, player2)
@@ -271,6 +283,12 @@ while run:  # keep looping
         win.blit(start, background_rect)
         keys = pygame.key.get_pressed()  # movement
         if keys[pygame.K_r]:
+            game_state = "choose"
+    if game_state == "choose":
+        win.fill(BLACK)
+        choices.draw(win)
+        keys = pygame.key.get_pressed()  # movement
+        if keys[pygame.K_h]:
             game_state = "play"
     if game_state == "play":
         win.fill(BLACK)
