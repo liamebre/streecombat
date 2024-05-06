@@ -189,7 +189,22 @@ class Punch(pygame.sprite.Sprite):
         if self.num == 20 and self.type == 2:
             self.kill()
 
-
+class Pointer(pygame.sprite.Sprite):
+    def __init__(self, num):
+        pygame.sprite.Sprite.__init__(self)
+        if num == 1:
+            self.image = pygame.image.load(os.path.join(img_folder, "pointer.png")).convert_alpha()
+        if num == 2:
+            self.image = pygame.image.load(os.path.join(img_folder, "pointer.png")).convert_alpha()
+        self.rect = self.image.get_rect()
+    def update(self):
+        self.x_speed = 0
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_LEFT] and not self.rect.x < 3:
+            self.x_speed = -10
+        if keys[pygame.K_RIGHT] and not self.rect.x > WIDTH - 50:
+            self.x_speed = 10
+        self.rect.right += self.x_speed
 # health
 class Health(pygame.sprite.Sprite,):
     def __init__(self, x, y):
