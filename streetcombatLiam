@@ -117,9 +117,8 @@ class Player(pygame.sprite.Sprite):
         self.rect.right += self.x_speed
         # checks for collsion
         bing = pygame.sprite.groupcollide(fists, players, True, False)
-        if bing and self.block2 is False:
+        if bing and player2.block2 is False:
             pHealth[1] -= 10
-            #self.numh += 1
             numh2[0] += 1
             if pHealth[1] == 0:
                 player2.kill()
@@ -127,7 +126,7 @@ class Player(pygame.sprite.Sprite):
                 numh2[0] = 0
                 menu.gameover(self.numb)
         bonk = pygame.sprite.groupcollide(fists2, players2, True, False)
-        if bonk and self.block1 is False:
+        if bonk and player.block1 is False:
             pHealth[0] -= 10
             self.numh += 1
             if pHealth[0] == 0:
