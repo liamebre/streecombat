@@ -13,6 +13,7 @@ game_state = "start"
 over = False
 playerpng = ["guy.png","guy2.png","guy3.png"]
 
+
 pygame.init()
 pygame.mixer.init()
 game_folder = os.path.dirname(__file__)
@@ -62,9 +63,9 @@ class Player(pygame.sprite.Sprite):
     def __init__(self, p, num, nump, numh,image):
         pygame.sprite.Sprite.__init__(self)
         if num == 1:
-            self.image = pygame.image.load(os.path.join(img_folder, image)).convert()
+            self.image = pygame.image.load(os.path.join(img_folder, image)).convert_alpha()
         if num == 2:
-            self.image = pygame.image.load(os.path.join(img_folder, image)).convert()
+            self.image = pygame.image.load(os.path.join(img_folder, image)).convert_alpha()
         self.rect = self.image.get_rect()
         self.rect.x = (WIDTH/8) * p
         self.rect.bottom = HEIGHT - 165
@@ -193,33 +194,40 @@ class Punch(pygame.sprite.Sprite):
 class Health(pygame.sprite.Sprite,):
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load(os.path.join(img_folder, p1imgHP[player.numh])).convert()
+        self.image = pygame.image.load(os.path.join(img_folder, p1imgHP[player.numh])).convert_alpha()
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
         self.HP = 320
     def update(self):
-        self.image = pygame.image.load(os.path.join(img_folder, p1imgHP[player.numh])).convert()
-        health2.image = pygame.image.load(os.path.join(img_folder, p2imgHP[numh2[0]])).convert()
+        self.image = pygame.image.load(os.path.join(img_folder, p1imgHP[player.numh])).convert_alpha()
+        health2.image = pygame.image.load(os.path.join(img_folder, p2imgHP[numh2[0]])).convert_alpha()
 
 
 class Choose(pygame.sprite.Sprite):
     def __init__(self, x, y,skin):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load(os.path.join(img_folder,skin)).convert()
+        self.image = pygame.image.load(os.path.join(img_folder,skin)).convert_alpha()
         self.image.set_colorkey(BLACK)
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
+    def update(self):
+        ch2 = pygame.sprite.groupcollide(choices, players2, True, False)
+        ch = pygame.sprite.groupcollide(choices, players, True, False)
+        keys = pygame.key.get_pressed()  # movement
+        if ch2 or ch and keys[pygame.K_b]:
+            print("good pick")
+
 
 choices = pygame.sprite.Group()
 for i in range(len(playerpng)):
-    c = Choose(300 * (i+1) , 350,playerpng[i],)
+    c = Choose(((WIDTH/len(playerpng))*i)+125, 350,playerpng[i],)
     choices.add(c)
 
 
 all_sprites=pygame.sprite.Group()
-player = Player(1,1,nump,numh,playerpng[0])
-player2 = Player(6,2,nump,numh2,playerpng[1])
+player = Player(1,1,nump,numh, playerpng[0])
+player2 = Player(6,2,nump,numh2, playerpng[1])
 players = pygame.sprite.Group()
 players2 = pygame.sprite.Group()
 fists = pygame.sprite.Group()
@@ -242,15 +250,33 @@ while run:  # keep looping
         if event.type == pygame.QUIT:  # x in top right
             run = False
         elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_SPACE:
-                player.swing(1, 1)
-            if event.key == pygame.K_f:
-                player.swing(1, 2)
-            if event.key == pygame.K_SEMICOLON:
-                player.swing(2, 1)
-            if event.key == pygame.K_QUOTE:
-                player.swing(2, 2)
+            if player2.block2 is False:
+                if event.key == pygame.K_SEMICOLON:
+                    player.swing(2, 1)
+                if event.key == pygame.K_QUOTE:
+                    player.swing(2, 2)
+            if player.block1 is False:
+                if event.key == pygame.K_SPACE:
+                    player.swing(1, 1)
+                if event.key == pygame.K_f:
+                    player.swing(1, 2)
             # set background Colour
+    if game_state == "start":
+        win.fill(BLACK)
+        win.blit(start, background_rect)
+        keys = pygame.key.get_pressed()  # movement
+        if keys[pygame.K_r]:
+            game_state = "choose"
+    if game_state == "choose":
+        game_state = "play"
+        keys = pygame.key.get_pressed()  # movement
+        if keys[pygame.K_h]:
+            pass
+    if game_state == "play":
+        win.fill(BLACK)
+        win.blit(background, background_rect)
+        all_sprites.update()
+        all_sprites.draw(win)
     if player.numb == 1:
         game_state = "gameover"
     if game_state == "gameover":
@@ -277,24 +303,6 @@ while run:  # keep looping
                 all_sprites.add(player, player2)
                 pHealth = [320, 320]
                 over = False
-
-    if game_state == "start":
-        win.fill(BLACK)
-        win.blit(start, background_rect)
-        keys = pygame.key.get_pressed()  # movement
-        if keys[pygame.K_r]:
-            game_state = "choose"
-    if game_state == "choose":
-        win.fill(BLACK)
-        choices.draw(win)
-        keys = pygame.key.get_pressed()  # movement
-        if keys[pygame.K_h]:
-            game_state = "play"
-    if game_state == "play":
-        win.fill(BLACK)
-        win.blit(background, background_rect)
-        all_sprites.update()
-        all_sprites.draw(win)
         # draw rectangle in position and set colour
         # redraw the screen
     pygame.display.flip()
