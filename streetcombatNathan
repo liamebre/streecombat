@@ -113,6 +113,7 @@ class Player(pygame.sprite.Sprite):
                 if pHealth[1] == 0:
                     player2.kill()
                     self.numb -= 1
+                    numh[0] = 0
                     numh2[0] = 0
         if player.block1 is False:
             if keys[pygame.K_a] and self.num == 1 and not self.rect.x < -50 and self.numb == 2:
@@ -134,6 +135,7 @@ class Player(pygame.sprite.Sprite):
                 if pHealth[0] == 0:
                     player.kill()
                     self.numb -= 1
+                    numh[0] = 0
                     numh2[0] = 0
         self.rect.right += self.x_speed
         # checks for collsion
