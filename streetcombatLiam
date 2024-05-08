@@ -16,7 +16,7 @@ playerpng = ["guy.png","guy2.png","guy3.png"]
 
 pygame.init()
 pygame.mixer.init()
-game_folder = os.path.dirname(__file__)
+game_folder = os.path.dirname(__filea__)
 img_folder = os.path.join(game_folder, "img")
 
 numh = 0
