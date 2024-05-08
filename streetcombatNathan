@@ -20,15 +20,15 @@ player2rangepng = ['guybullet.png','bullet.png','magebulet1.png']
 playerarmpng = ['arm1.png','guy2arm1.png','guy3arm2.png']
 player2armpng = ['arm2.png','guy2arm.png','guy3arm1.png']
 
-p1choose = [1]
-p2choose = [2]
+p1choose = [0]
+p2choose = [1]
 
 pygame.init()
 pygame.mixer.init()
 game_folder = os.path.dirname(__file__)
 img_folder = os.path.join(game_folder, "img")
 
-numh = 0
+numh = [0]
 numh2 = [0]
 WIDTH = 1300
 HEIGHT = 700
@@ -123,6 +123,7 @@ class Player(pygame.sprite.Sprite):
                     player2.kill()
                     self.numb -= 1
                     numh2[0] = 0
+                    numh[0] = 0
         if player.block1 is False:
             if keys[pygame.K_a] and self.num == 1 and not self.rect.x < -50 and self.numb == 2:
                 self.x_speed = -20
@@ -139,11 +140,12 @@ class Player(pygame.sprite.Sprite):
             bonk = pygame.sprite.groupcollide(fists2, players2, True, False)
             if bonk and player.block1 is False:
                 pHealth[0] -= 10
-                self.numh += 1
+                numh[0] += 1
                 if pHealth[0] == 0:
                     player.kill()
                     self.numb -= 1
                     numh2[0] = 0
+                    numh[0] = 0
         self.rect.right += self.x_speed
         # checks for collsion
 
@@ -229,13 +231,13 @@ class Pointer(pygame.sprite.Sprite):
 class Health(pygame.sprite.Sprite,):
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load(os.path.join(img_folder, p1imgHP[player.numh])).convert_alpha()
+        self.image = pygame.image.load(os.path.join(img_folder, p1imgHP[numh[0]])).convert_alpha()
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
         self.HP = 320
     def update(self):
-        self.image = pygame.image.load(os.path.join(img_folder, p1imgHP[player.numh])).convert_alpha()
+        self.image = pygame.image.load(os.path.join(img_folder, p1imgHP[player.numh[0]])).convert_alpha()
         health2.image = pygame.image.load(os.path.join(img_folder, p2imgHP[numh2[0]])).convert_alpha()
 
 
@@ -347,8 +349,8 @@ while run:  # keep looping
                 game_state = "choose"
                 player2.kill()
                 player.kill()
-                player = Player(1, 1, nump,numh,playerpng[0])
-                player2 = Player(6, 2, nump,numh2,playerpng[1])
+                player = Player(1, 1, nump,numh,playerpng[p1choose[0]])
+                player2 = Player(6, 2, nump,numh2,player2png[p2choose[0]])
                 players2.add(player)
                 players.add(player2)
                 all_sprites.add(player, player2)
