@@ -77,8 +77,16 @@ class Choose(pygame.sprite.Sprite):
         self.info = skin
         self.num = q
 
-    def update(self):
-        pass
+    def checkForInput(self, position):
+        if position[0] in range(self.rect.left, self.rect.right) and position[1] in range(self.rect.top, self.rect.bottom):
+            print(self.num)
+
+    def changeColor(self, position):
+        if position[0] in range(self.rect.left, self.rect.right) and position[1] in range(self.rect.top, self.rect.bottom):
+            print("skibidi")
+        else:
+            print("dop,dop")
+
 
 
 choices = pygame.sprite.Group()
@@ -326,7 +334,11 @@ while run:  # keep looping
         pointers.update()
         choices.draw(win)
         pointers.draw(win)
-        keys = pygame.key.get_pressed()  # movement
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_f]:
+            c.checkForInput(pygame.mouse.get_pos())
+        if keys[pygame.K_SEMICOLON]:
+            c.checkForInput(pygame.mouse.get_pos())
         if keys[pygame.K_h]:
             game_state = "play"
     if game_state == "play":
