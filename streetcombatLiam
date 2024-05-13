@@ -1,9 +1,6 @@
 
-
 import pygame
-import random
 import os
-from random import random, randint, seed
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
@@ -12,13 +9,13 @@ BLUE = (0, 0, 255)
 
 game_state = "start"
 over = False
-playerpng = ["guy.png","guy2 (1).png","megaman.png"]
-player2png = ["guy.png","guy2.png","megaman1.png"]
+playerpng = ["guy.png", "guy2 (1).png", "megaman.png"]
+player2png = ["guy.png", "guy2.png", "megaman1.png"]
 # atacks pngs
-playerrangepng = ['guybullet2.png','bullet1.png','magebulet2.png']
-player2rangepng = ['guybullet.png','bullet.png','magebulet1.png']
-playerarmpng = ['arm1.png','guy2arm1.png','guy3arm2.png']
-player2armpng = ['arm2.png','guy2arm.png','guy3arm1.png']
+playerrangepng = ['guybullet2.png', 'bullet1.png', 'magebulet2.png']
+player2rangepng = ['guybullet.png', 'bullet.png', 'magebulet1.png']
+playerarmpng = ['arm1.png', 'guy2arm1.png', 'guy3arm2.png']
+player2armpng = ['arm2.png', 'guy2arm.png', 'guy3arm1.png']
 
 p1choose = [0]
 p2choose = [1]
@@ -56,11 +53,11 @@ start = pygame.image.load(os.path.join(img_folder, "start.png"))
 gameover = pygame.image.load(os.path.join(img_folder, "gameover.png"))
 ponew = pygame.image.load(os.path.join(img_folder, "p1win.png"))
 ptwow = pygame.image.load(os.path.join(img_folder, "p2win.png"))
-font_name = pygame.font.match_font("arial",False,False )
+font_name = pygame.font.match_font("arial", False, False)
 
 
-def draw_text(surf,text,size,x, y):
-    font = pygame.font.Font(font_name,size)
+def draw_text(surf, text, size, x, y):
+    font = pygame.font.Font(font_name, size)
     text_surface = font.render(text, True, RED)
     text_rect = text_surface.get_rect()
     text_rect.midtop = (x, y)
@@ -68,6 +65,27 @@ def draw_text(surf,text,size,x, y):
 
 
 background_rect = background.get_rect()
+
+
+class Choose(pygame.sprite.Sprite):
+    def __init__(self, x, y, skin, q):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.image.load(os.path.join(img_folder, skin)).convert_alpha()
+        self.image.set_colorkey(BLACK)
+        self.rect = self.image.get_rect()
+        self.rect.center = (x, y)
+        self.info = skin
+        self.num = q
+
+    def update(self):
+        pass
+
+
+choices = pygame.sprite.Group()
+for i in range(len(playerpng)):
+    c = Choose(((WIDTH/len(playerpng))*i)+125, 350, playerpng[i], i)
+    which.append(c)
+    choices.add(c)
 
 
 class Player(pygame.sprite.Sprite):
@@ -110,12 +128,7 @@ class Player(pygame.sprite.Sprite):
                 self.x_speed = 20
             if keys[pygame.K_i] and self.num == 2 and self.numb == 2:
                 self.jump = True
-            if self.jump:  # jumping 1
-                self.rect.y -= self.jump_speed
-                self.jump_speed -= self.grav
-                if self.jump_speed < -self.jump_height:
-                    self.jump_speed = self.jump_height
-                    self.jump = False
+
             bing = pygame.sprite.groupcollide(fists, players, True, False)
             if bing and player2.block2 is False:
                 pHealth[1] -= 10
@@ -132,12 +145,6 @@ class Player(pygame.sprite.Sprite):
                 self.x_speed = 20
             if keys[pygame.K_w] and self.num == 1 and self.numb == 2:
                 self.jump = True
-            if self.jump:  # jumping 2
-                self.rect.y -= self.jump_speed
-                self.jump_speed -= self.grav
-                if self.jump_speed < -self.jump_height:
-                    self.jump_speed = self.jump_height
-                    self.jump = False
             bonk = pygame.sprite.groupcollide(fists2, players2, True, False)
             if bonk and player.block1 is False:
                 pHealth[0] -= 10
@@ -147,6 +154,18 @@ class Player(pygame.sprite.Sprite):
                     self.numb -= 1
                     numh2[0] = 0
                     numh[0] = 0
+        if self.jump:  # jumping 2
+            self.rect.y -= self.jump_speed
+            self.jump_speed -= self.grav
+            if self.jump_speed < -self.jump_height:
+                self.jump_speed = self.jump_height
+                self.jump = False
+        if self.jump:  # jumping 1
+            self.rect.y -= self.jump_speed
+            self.jump_speed -= self.grav
+            if self.jump_speed < -self.jump_height:
+                self.jump_speed = self.jump_height
+                self.jump = False
         self.rect.right += self.x_speed
         # checks for collsion
 
@@ -245,30 +264,10 @@ class Health(pygame.sprite.Sprite,):
         self.rect.x = x
         self.rect.y = y
         self.HP = 320
+
     def update(self):
         self.image = pygame.image.load(os.path.join(img_folder, p1imgHP[player.numh[0]])).convert_alpha()
         health2.image = pygame.image.load(os.path.join(img_folder, p2imgHP[numh2[0]])).convert_alpha()
-
-
-class Choose(pygame.sprite.Sprite):
-    def __init__(self, x, y, skin, q):
-        pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load(os.path.join(img_folder,skin)).convert_alpha()
-        self.image.set_colorkey(BLACK)
-        self.rect = self.image.get_rect()
-        self.rect.center = (x, y)
-        self.info = skin
-        self.num = q
-
-    def update(self):
-        pass
-
-
-choices = pygame.sprite.Group()
-for i in range(len(playerpng)):
-    c = Choose(((WIDTH/len(playerpng))*i)+125, 350, playerpng[i], i)
-    which.append(c)
-    choices.add(c)
 
 
 all_sprites=pygame.sprite.Group()
