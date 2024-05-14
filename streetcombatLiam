@@ -81,10 +81,15 @@ class Choose(pygame.sprite.Sprite):
     def checkForInput(self, position,num):
         if position[0] in range(self.rect.left, self.rect.right) and position[1] in range(self.rect.top, self.rect.bottom):
             print(self.num)
-            if player.num == 1 and keys[pygame.K_u]:
+            if player.num == 1 and keys[pygame.K_f]:
                 player.image = pygame.image.load(os.path.join(img_folder, playerpng[self.num])).convert_alpha()
-            if player2.num == 2 and keys[pygame.K_y] :
+                Punch.image = pygame.image.load(os.path.join(img_folder, playerarmpng[self.num])).convert()
+                Punch.image = pygame.image.load(os.path.join(img_folder, playerrangepng[self.num])).convert()
+            if player2.num == 2 and keys[pygame.K_SEMICOLON] :
                 player2.image = pygame.image.load(os.path.join(img_folder, playerpng[self.num])).convert_alpha()
+                Punch.image = pygame.image.load(os.path.join(img_folder, player2armpng[self.num])).convert()
+                Punch.image = pygame.image.load(os.path.join(img_folder, player2armpng[self.num])).convert()
+
 
 
 choices = pygame.sprite.Group()
@@ -227,41 +232,6 @@ class Punch(pygame.sprite.Sprite):
             self.kill()
 
 
-class Pointer(pygame.sprite.Sprite):
-    def __init__(self, num):
-        pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load(os.path.join(img_folder, "pointer.png")).convert_alpha()
-        self.image.set_colorkey(WHITE)
-        self.rect = self.image.get_rect()
-        self.x_speed = 28
-        self.num = num
-    def update(self):
-        if keys[pygame.K_a] and self.num == 2:  # if left arrow is pressed
-            self.rect.x -= self.x_speed  # change position based on velocity
-        if keys[pygame.K_d] and self.num == 2:   # if right arrow is pressed
-            self.rect.x += self.x_speed
-        if keys[pygame.K_w] and self.num == 2:    # if up arrow is pressed
-            self.rect.y -= self.x_speed
-        if keys[pygame.K_s] and self.num == 2:  # if down arrow is pressed
-            self.rect.y += self.x_speed
-        if keys[pygame.K_j] and self.num == 1:  # if left arrow is pressed
-            self.rect.x -= self.x_speed  # change position based on velocity
-        if keys[pygame.K_l] and self.num == 1:   # if right arrow is pressed
-            self.rect.x += self.x_speed
-        if keys[pygame.K_i] and self.num == 1:    # if up arrow is pressed
-            self.rect.y -= self.x_speed
-        if keys[pygame.K_k] and self.num == 1:  # if down arrow is pressed
-            self.rect.y += self.x_speed
-        ch2 = pygame.sprite.groupcollide(choices, pointers1, False, False)
-        ch = pygame.sprite.groupcollide(choices, pointers2, False, False)  # movement
-        if ch2 and keys[pygame.K_SEMICOLON] and pointer2.num == 2:
-            print("good pick")
-            players.image = pygame.image.load(os.path.join(img_folder, playerpng[c.num])).convert_alpha()
-        if ch and keys[pygame.K_f] and pointer1.num == 1:
-            print("better pick")
-            players2.image = pygame.image.load(os.path.join(img_folder, player2png[c.num])).convert_alpha()
-
-
 class Health(pygame.sprite.Sprite,):
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
@@ -289,14 +259,6 @@ healths = pygame.sprite.Group()
 healths.add(health1, health2)
 players2.add(player)
 players.add(player2)
-pointer1 = Pointer(1)
-pointer2 = Pointer(2)
-pointers = pygame.sprite.Group()
-pointers1 = pygame.sprite.Group()
-pointers2 = pygame.sprite.Group()
-pointers1.add(pointer1)
-pointers2.add(pointer2)
-pointers.add(pointer1, pointer2)
 all_sprites.add(player, player2, healths)
 
 pygame.display.set_caption("street combat")
@@ -329,15 +291,13 @@ while run:  # keep looping
     if game_state == "choose":
         win.fill(BLACK)
         choices.update()
-        pointers.update()
         choices.draw(win)
-        pointers.draw(win)
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_u]:
+        if keys[pygame.K_SEMICOLON]:
             c.checkForInput(pygame.mouse.get_pos(),0)
             c2.checkForInput(pygame.mouse.get_pos(),2)
             c1.checkForInput(pygame.mouse.get_pos(),1)
-        if keys[pygame.K_y]:
+        if keys[pygame.K_f]:
             c.checkForInput(pygame.mouse.get_pos(),0)
             c2.checkForInput(pygame.mouse.get_pos(),2)
             c1.checkForInput(pygame.mouse.get_pos(),1)
