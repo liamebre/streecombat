@@ -54,6 +54,7 @@ start = pygame.image.load(os.path.join(img_folder, "start.png"))
 gameover = pygame.image.load(os.path.join(img_folder, "gameover.png"))
 ponew = pygame.image.load(os.path.join(img_folder, "p1win.png"))
 ptwow = pygame.image.load(os.path.join(img_folder, "p2win.png"))
+charchoose = pygame.image.load(os.path.join(img_folder, "charchoose2.png"))
 font_name = pygame.font.match_font("arial", False, False)
 
 
@@ -86,7 +87,7 @@ class Choose(pygame.sprite.Sprite):
                 Punch.image = pygame.image.load(os.path.join(img_folder, playerarmpng[self.num])).convert()
                 Punch.image = pygame.image.load(os.path.join(img_folder, playerrangepng[self.num])).convert()
             if player2.num == 2 and keys[pygame.K_SEMICOLON] :
-                player2.image = pygame.image.load(os.path.join(img_folder, playerpng[self.num])).convert_alpha()
+                player2.image = pygame.image.load(os.path.join(img_folder, player2png[self.num])).convert_alpha()
                 Punch.image = pygame.image.load(os.path.join(img_folder, player2armpng[self.num])).convert()
                 Punch.image = pygame.image.load(os.path.join(img_folder, player2armpng[self.num])).convert()
 
@@ -290,6 +291,7 @@ while run:  # keep looping
             game_state = "choose"
     if game_state == "choose":
         win.fill(BLACK)
+        win.blit(charchoose,background_rect)
         choices.update()
         choices.draw(win)
         keys = pygame.key.get_pressed()
