@@ -86,7 +86,7 @@ class Choose(pygame.sprite.Sprite):
                 player.image = pygame.image.load(os.path.join(img_folder, playerpng[self.num])).convert_alpha()
                 Punch.image = pygame.image.load(os.path.join(img_folder, playerarmpng[self.num])).convert()
                 Punch.image = pygame.image.load(os.path.join(img_folder, playerrangepng[self.num])).convert()
-            if player2.num == 2 and keys[pygame.K_SEMICOLON] :
+            if player2.num == 2 and keys[pygame.K_SEMICOLON]:
                 player2.image = pygame.image.load(os.path.join(img_folder, player2png[self.num])).convert_alpha()
                 Punch.image = pygame.image.load(os.path.join(img_folder, player2armpng[self.num])).convert()
                 Punch.image = pygame.image.load(os.path.join(img_folder, player2armpng[self.num])).convert()
@@ -97,7 +97,7 @@ choices = pygame.sprite.Group()
 c = Choose(((WIDTH/4)*1), 350, playerpng[0], 0)
 c1 = Choose(((WIDTH/4)*2), 350, playerpng[1], 1)
 c2 = Choose(((WIDTH/4)*3), 350, playerpng[2], 2)
-choices.add(c,c1,c2)
+choices.add(c, c1, c2)
 
 
 class Player(pygame.sprite.Sprite):
@@ -300,9 +300,9 @@ while run:  # keep looping
             c2.checkForInput(pygame.mouse.get_pos(),2)
             c1.checkForInput(pygame.mouse.get_pos(),1)
         if keys[pygame.K_f]:
-            c.checkForInput(pygame.mouse.get_pos(),0)
-            c2.checkForInput(pygame.mouse.get_pos(),2)
-            c1.checkForInput(pygame.mouse.get_pos(),1)
+            c.checkForInput(pygame.mouse.get_pos(), 0)
+            c2.checkForInput(pygame.mouse.get_pos(), 2)
+            c1.checkForInput(pygame.mouse.get_pos(), 1)
         if keys[pygame.K_h]:
             game_state = "play"
     if game_state == "play":
@@ -329,8 +329,8 @@ while run:  # keep looping
                 game_state = "choose"
                 player2.kill()
                 player.kill()
-                player = Player(1, 1, nump, numh,)
-                player2 = Player(6, 2, nump, numh2,)
+                player = Player(1, 1, nump, numh)
+                player2 = Player(6, 2, nump, numh2)
                 players2.add(player)
                 players.add(player2)
                 all_sprites.add(player, player2)
