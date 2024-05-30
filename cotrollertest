@@ -83,34 +83,40 @@ class Player(pygame.sprite.Sprite):
         self.x_speed = 10
         self.num = num
         self.heath = 15
-        self.y_vel = 10
-        self.grav = 1
-        self.jump_height = 25
+        self.y_vel = 9
+        self.grav = 0.75
+        self.jump_height = 18
         self.jump_speed = self.jump_height
         self.jump = False
         self.block1 = False
         self.block2 = False
         self.numb = nump
         self.numh = numh
+        self.canhit = True
 
     def update(self, movement: tuple = (0, 0)):
         self.rect.x += movement[0] * self.x_speed
+        self.canhit = True
         bing = pygame.sprite.groupcollide(fists, players, True, False)
         if bing and player2.block2 is False:
             pHealth[1] -= 10
             numh2[0] += 1
+            player2.rect.x += 13
+            player2.canhit = False
             if pHealth[1] == 0:
                 player2.kill()
-                self.numb -= 1
+                self.numb = 1
                 numh2[0] = 0
                 numh[0] = 0
         bonk = pygame.sprite.groupcollide(fists2, players2, True, False)
         if bonk and player.block1 is False:
             pHealth[0] -= 10
             numh[0] += 1
+            player.rect.x -= 13
+            player.canhit = False
             if pHealth[0] == 0:
                 player.kill()
-                self.numb -= 1
+                self.numb = 1
                 numh2[0] = 0
                 numh[0] = 0
         if self.jump:  # jumping 2
@@ -191,8 +197,11 @@ class Punch(pygame.sprite.Sprite):
 
     def update(self):
         # makes fist move
-        self.rect.x -= self.y_speed
-        # gives the attack its range
+        if self.type == 1:
+            self.rect.x -= self.y_speed
+        if self.type == 2:
+            self.rect.x -= self.y_speed - 8
+            # gives the attack its range
         self.num += 1
         if self.num == 6 and self.type == 1:
             self.kill()
@@ -241,12 +250,13 @@ while run:  # keep looping
     for event in pygame.event.get():
         if event.type == pygame.QUIT:  # x in top right
             run = False
-
+    p1.update()
+    p2.update()
     if game_state == "start":
         win.fill(BLACK)
         win.blit(start, background_rect)
         keys = pygame.key.get_pressed()  # movement
-        if p2.is_button_pressed("player") or p1.is_button_pressed("player"):
+        if p1.is_button_pressed("player"):
             game_state = "choose"
     if game_state == "choose":
         win.fill(BLACK)
@@ -262,39 +272,52 @@ while run:  # keep looping
             c.checkForInput(pygame.mouse.get_pos())
             c2.checkForInput(pygame.mouse.get_pos())
             c1.checkForInput(pygame.mouse.get_pos())
-        if p2.is_button_pressed(1) or p1.is_button_pressed(1):
+        if p2.is_button_pressed(0) or p1.is_button_pressed(0):
             game_state = "play"
     if game_state == "play":
         win.fill(BLACK)
         win.blit(background, background_rect)
-        if p1.is_button_just_pressed(2):
+        if p1.is_button_pressed(0):
+            print("block")
             player2.block2 = True
         else:
             player2.block2 = False
         if player2.block2 is False:
             player2.update(p1.get_axis())
-            if p1.is_button_pressed(2):
-                print("2")
-                player.swing(2, 1)
-            if p1.is_button_pressed(1):
-                print("1")
-                player.swing(2, 2)
-        if p2.is_button_pressed(3):
+            if player2.canhit is True:
+                if p1.is_button_just_pressed(3):
+                    print("jump")
+                    player2.jump = True
+                if p1.is_button_just_pressed(2):
+                    print("2")
+                    player.swing(2, 1)
+                if p1.is_button_just_pressed(1):
+                    print("1")
+                    player.swing(2, 2)
+                if player2.rect.left >= WIDTH:
+                    pHealth[1] = 0
+        if p2.is_button_pressed(0):
             player.block1 = True
         else:
             player.block1 = False
         if player.block1 is False:
             player.update(p2.get_axis())
-            if p2.is_button_pressed(2):
-                print("2")
-                player.swing(1, 1)
-            if p2.is_button_pressed(1):
-                print("1")
-                player.swing(1, 2)
+            if player.canhit is True:
+                if p2.is_button_just_pressed(2):
+                    print("2")
+                    player.swing(1, 1)
+                if p2.is_button_just_pressed(1):
+                    print("1")
+                    player.swing(1, 2)
+                if p2.is_button_pressed(3):
+                    player.jump = True
+                if player.rect.right <= 0:
+                    pHealth[0] = 0
+
 
         all_sprites.update()
         all_sprites.draw(win)
-    if player.numb == 1:
+    if player.numb == 1 or player2.numb == 1:
         game_state = "gameover"
     if game_state == "gameover":
         if pHealth[0] > pHealth[1]:
@@ -304,12 +327,12 @@ while run:  # keep looping
             win.fill(BLACK)
             win.blit(ptwow, background_rect)
         keys = pygame.key.get_pressed()  # movement
-        if keys[pygame.K_t] or over is True:
+        if p2.is_button_pressed(0) or p1.is_button_pressed(0) or over is True:
             over = True
             win.fill(WHITE)
             win.blit(gameover, background_rect)
             keys = pygame.key.get_pressed()  # movement
-            if keys[pygame.K_r]:
+            if p2.is_button_pressed(4) or p1.is_button_pressed(4):
                 game_state = "choose"
                 player2.kill()
                 player.kill()
