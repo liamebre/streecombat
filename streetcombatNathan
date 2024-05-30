@@ -48,6 +48,15 @@ p2imgHP = ['PlayertwoHP1.png', 'PlayertwoHP2.png', 'PlayertwoHP3.png', 'Playertw
            'PlayertwoHP21.png', 'PlayertwoHP22.png', 'PlayertwoHP23.png', 'PlayertwoHP24.png', 'PlayertwoHP25.png',
            'PlayertwoHP26.png', 'PlayertwoHP27.png', 'PlayertwoHP28.png', 'PlayertwoHP29.png', 'PlayertwoHP30.png',
            'PlayertwoHP31.png', 'PlayertwoHP32.png', 'PlayertwoHP32.png']
+rangesound = ['guy1sound.wav','guy2sound1.mp3','4-101soundboards.mp3']
+armsound = ['punch-2-37333.mp3','guy2sound1.mp3','7-101soundboards.mp3']
+
+
+p1rsound = pygame.mixer.Sound(os.path.join(img_folder,rangesound[0]))
+p1asound = pygame.mixer.Sound(os.path.join(img_folder,armsound[1]))
+p2rsound = pygame.mixer.Sound(os.path.join(img_folder,rangesound[0]))
+p2asound = pygame.mixer.Sound(os.path.join(img_folder,armsound[1]))
+
 balls = 0
 nump = 2
 background = pygame.image.load(os.path.join(img_folder, "fitbg.png"))
@@ -88,13 +97,16 @@ class Choose(pygame.sprite.Sprite):
                 Punch.image = pygame.image.load(os.path.join(img_folder, playerarmpng[self.num])).convert()
                 Punch.image = pygame.image.load(os.path.join(img_folder, playerrangepng[self.num])).convert()
                 p1choose[0] = self.num
+                p1rsound = pygame.mixer.Sound(os.path.join(img_folder, rangesound[p1choose[0]]))
+                p1asound = pygame.mixer.Sound(os.path.join(img_folder, armsound[p1choose[0]]))
 
             if player2.num == 2 and keys[pygame.K_SEMICOLON]:
                 player2.image = pygame.image.load(os.path.join(img_folder, player2png[self.num])).convert_alpha()
                 Punch.image = pygame.image.load(os.path.join(img_folder, player2armpng[self.num])).convert()
                 Punch.image = pygame.image.load(os.path.join(img_folder, player2rangepng[self.num])).convert()
                 p2choose[0] = self.num
-
+                p2rsound = pygame.mixer.Sound(os.path.join(img_folder, rangesound[p2choose[0]]))
+                p2asound = pygame.mixer.Sound(os.path.join(img_folder, armsound[p2choose[0]]))
 
 
 choices = pygame.sprite.Group()
@@ -276,16 +288,25 @@ while run:  # keep looping
         if event.type == pygame.QUIT:  # x in top right
             run = False
         elif event.type == pygame.KEYDOWN:
+            p2rsound = pygame.mixer.Sound(os.path.join(img_folder, rangesound[p2choose[0]]))
+            p2asound = pygame.mixer.Sound(os.path.join(img_folder, armsound[p2choose[0]]))
+            p1rsound = pygame.mixer.Sound(os.path.join(img_folder, rangesound[p1choose[0]]))
+            p1asound = pygame.mixer.Sound(os.path.join(img_folder, armsound[p1choose[0]]))
             if player2.block2 is False:
                 if event.key == pygame.K_SEMICOLON:
                     player.swing(2, 1)
+                    pygame.mixer.Sound.play(p2asound)
                 if event.key == pygame.K_QUOTE:
                     player.swing(2, 2)
+                    pygame.mixer.Sound.play(p2rsound)
             if player.block1 is False:
                 if event.key == pygame.K_SPACE:
                     player.swing(1, 1)
+                    pygame.mixer.Sound.play(p1asound)
+
                 if event.key == pygame.K_f:
                     player.swing(1, 2)
+                    pygame.mixer.Sound.play(p1rsound)
             # set background Colour
     if game_state == "start":
         win.fill(BLACK)
