@@ -51,7 +51,8 @@ p2imgHP = ['PlayertwoHP1.png', 'PlayertwoHP2.png', 'PlayertwoHP3.png', 'Playertw
 rangesound = ['guy1sound.wav','guy2sound1.mp3','4-101soundboards.mp3']
 armsound = ['punch-2-37333.mp3','guy2sound1.mp3','7-101soundboards.mp3']
 
-
+diesound = pygame.mixer.Sound(os.path.join(img_folder, 'winsound.mp3'))
+choosesound = pygame.mixer.Sound(os.path.join(img_folder, 'choosesound.mp3'))
 p1rsound = pygame.mixer.Sound(os.path.join(img_folder,rangesound[0]))
 p1asound = pygame.mixer.Sound(os.path.join(img_folder,armsound[1]))
 p2rsound = pygame.mixer.Sound(os.path.join(img_folder,rangesound[0]))
@@ -312,9 +313,15 @@ while run:  # keep looping
         win.fill(BLACK)
         win.blit(start, background_rect)
         keys = pygame.key.get_pressed()  # movement
+        sound1 = 0
         if keys[pygame.K_r]:
             game_state = "choose"
     if game_state == "choose":
+        if sound1 == 0:
+            pygame.mixer.Sound.play(choosesound)
+            sound1 = 1
+
+
         win.fill(BLACK)
         win.blit(charchoose,background_rect)
         choices.update()
@@ -336,9 +343,14 @@ while run:  # keep looping
         win.blit(background, background_rect)
         all_sprites.update()
         all_sprites.draw(win)
+        sound1 = 1
     if player.numb == 1:
         game_state = "gameover"
+
     if game_state == "gameover":
+        if sound1 == 1:
+            pygame.mixer.Sound.play(diesound)
+            sound1 = 0
         if pHealth[0] > pHealth[1]:
             win.fill(BLACK)
             win.blit(ponew, background_rect)
