@@ -296,18 +296,22 @@ while run:  # keep looping
             if player2.block2 is False:
                 if event.key == pygame.K_SEMICOLON:
                     player.swing(2, 1)
-                    pygame.mixer.Sound.play(p2asound)
+                    if game_state == "play":
+                        pygame.mixer.Sound.play(p2asound)
                 if event.key == pygame.K_QUOTE:
                     player.swing(2, 2)
-                    pygame.mixer.Sound.play(p2rsound)
+                    if game_state == "play":
+                        pygame.mixer.Sound.play(p2rsound)
             if player.block1 is False:
                 if event.key == pygame.K_SPACE:
                     player.swing(1, 1)
-                    pygame.mixer.Sound.play(p1asound)
+                    if game_state == "play":
+                        pygame.mixer.Sound.play(p1asound)
 
                 if event.key == pygame.K_f:
                     player.swing(1, 2)
-                    pygame.mixer.Sound.play(p1rsound)
+                    if game_state == "play":
+                        pygame.mixer.Sound.play(p1rsound)
             # set background Colour
     if game_state == "start":
         win.fill(BLACK)
